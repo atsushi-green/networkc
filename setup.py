@@ -1,10 +1,10 @@
-from distutils.core import Extension, setup
+from setuptools import Extension, setup
 
-module = Extension("floyd_warshall_module", sources=["floyd_warshall.c"])
+module = Extension("networkc", sources=["networkc.c"])
 
 setup(
-    name="FloydWarshallPackage",
+    name="networkc",
     version="0.0",
-    description="Python interface for the Floyd-Warshall algorithm",
+    description="Python package with C extension for networkx",
     ext_modules=[module],
 )

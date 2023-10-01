@@ -1,6 +1,10 @@
+/*
+build: $ python setup.py build_ext --inplace
+*/
 #include <Python.h>
 
-void floyd_warshall(int n, double dist[n][n]) {
+void floyd_warshall(int n, double dist[n][n])
+{
     for (int k = 0; k < n; k++) {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -12,7 +16,8 @@ void floyd_warshall(int n, double dist[n][n]) {
     }
 }
 
-static PyObject* py_floyd_warshall(PyObject* self, PyObject* args) {
+static PyObject* py_floyd_warshall(PyObject* self, PyObject* args)
+{
     PyObject* py_dist;
     if (!PyArg_ParseTuple(args, "O", &py_dist)) {
         return NULL;
@@ -20,7 +25,7 @@ static PyObject* py_floyd_warshall(PyObject* self, PyObject* args) {
 
     int n = PyList_Size(py_dist);
     double dist[n][n];
-    
+
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             dist[i][j] = PyFloat_AsDouble(PyList_GetItem(PyList_GetItem(py_dist, i), j));
@@ -41,19 +46,24 @@ static PyObject* py_floyd_warshall(PyObject* self, PyObject* args) {
     return py_result;
 }
 
+// メソッドの定義
 static PyMethodDef methods[] = {
-    {"floyd_warshall", py_floyd_warshall, METH_VARARGS, "Execute Floyd-Warshall Algorithm"},
-    {NULL, NULL, 0, NULL}
+    { "floyd_warshall", py_floyd_warshall, METH_VARARGS, "Execute Floyd-Warshall Algorithm" },
+    // TODO: ここに足していけばOK
+    // 終了を示す
+    { NULL, NULL, 0, NULL }
 };
 
+// モジュールの定義
 static struct PyModuleDef module = {
     PyModuleDef_HEAD_INIT,
-    "floyd_warshall_module",
+    "networkc", // module name
     NULL,
     -1,
     methods
 };
 
-PyMODINIT_FUNC PyInit_floyd_warshall_module(void) {
+PyMODINIT_FUNC PyInit_networkc(void)
+{
     return PyModule_Create(&module);
 }

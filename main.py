@@ -1,23 +1,14 @@
-import floyd_warshall_module
+from test.test_util import generate_big_graph, networkc_floyd_warshall
+
+import networkx as nx
 
 
 def main():
-    graph = [
-        [0, 3, float("inf"), 7, 5],
-        [8, 0, 2, float("inf"), 1],
-        [5, float("inf"), 0, 1, 1],
-        [2, float("inf"), 3, 0, 1],
-        [2, 3, float("inf"), 2, 0],
-    ]
-
-    result = floyd_warshall_module.floyd_warshall(graph)
-    print(result)
-
-    # [[0.0, 3.0, 5.0, 6.0, 4.0],
-    #  [3.0, 0.0, 2.0, 3.0, 1.0],
-    #  [3.0, 4.0, 0.0, 1.0, 1.0],
-    #  [2.0, 4.0, 3.0, 0.0, 1.0],
-    #  [2.0, 3.0, 5.0, 2.0, 0.0]]
+    graph = generate_big_graph(num_nodes=10)
+    print(graph)
+    res = networkc_floyd_warshall(graph, weight="weight")
+    print(res[0][0])
+    print(res[0][1])
 
 
 if __name__ == "__main__":
