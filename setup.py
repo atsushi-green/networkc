@@ -1,10 +1,12 @@
-from setuptools import Extension, setup
+from setuptools import Extension, find_packages, setup
 
-module = Extension("networkc", sources=["networkc.c"])
+module = Extension("networkc_core", sources=["networkc.c"])
 
 setup(
     name="networkc",
-    version="0.0",
+    version="0.0.0",
     description="Python package with C extension for networkx",
     ext_modules=[module],
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
 )

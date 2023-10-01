@@ -1,24 +1,31 @@
+import time
+from test.test_util import generate_big_graph
+
 import networkx as nx
-import numpy as np
 
 import networkc as nc
 
 
 def main():
     G = nx.DiGraph()
-    G.add_nodes_from(range(4))
-    G.add_edge(0, 0, weight=0)
-    G.add_edge(1, 1, weight=0)
-    G.add_edge(2, 2, weight=0)
-    G.add_edge(3, 3, weight=0)
+    G.add_nodes_from(["A", "B", "C", "D"])
 
-    G.add_edge(0, 1, weight=1)
-    G.add_edge(1, 2, weight=2)
-    G.add_edge(2, 3, weight=1)
-    G.add_edge(3, 0, weight=1)
+    G.add_edge("A", "B", weight=1)
+    G.add_edge("B", "C", weight=2)
+    G.add_edge("C", "D", weight=1)
+    G.add_edge("D", "A", weight=1)
+    G = generate_big_graph(num_nodes=1000)
 
-    weight_matrix = nx.to_numpy_array(G, weight="weight", nonedge=np.inf).tolist()
-    print(nc.floyd_warshall(weight_matrix))
+    start = time.time()
+    res = nc.floyd_warshall(G, weight="weight")
+    print("C言語実装のfloyd_warshall", time.time() - start)
+    print(res["A"]["D"])
+
+    start = time.time()
+    res_orig = nx.floyd_warshall(G, weight="weight")
+    print("NetworkX実装のfloyd_warshall", time.time() - start)
+    print(res_orig["A"]["D"])
+    print(res == res_orig)
 
 
 if __name__ == "__main__":

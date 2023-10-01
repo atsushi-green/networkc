@@ -3,7 +3,7 @@ build: $ python setup.py build_ext --inplace
 */
 #include <Python.h>
 
-void floyd_warshall(int n, double dist[n][n])
+void c_floyd_warshall(int n, double dist[n][n])
 {
     for (int k = 0; k < n; k++) {
         for (int i = 0; i < n; i++) {
@@ -32,7 +32,7 @@ static PyObject* py_floyd_warshall(PyObject* self, PyObject* args)
         }
     }
 
-    floyd_warshall(n, dist);
+    c_floyd_warshall(n, dist);
 
     PyObject* py_result = PyList_New(n);
     for (int i = 0; i < n; i++) {
@@ -48,7 +48,7 @@ static PyObject* py_floyd_warshall(PyObject* self, PyObject* args)
 
 // メソッドの定義
 static PyMethodDef methods[] = {
-    { "floyd_warshall", py_floyd_warshall, METH_VARARGS, "Execute Floyd-Warshall Algorithm" },
+    { "c_floyd_warshall", py_floyd_warshall, METH_VARARGS, "Execute Floyd-Warshall Algorithm" },
     // TODO: ここに足していけばOK
     // 終了を示す
     { NULL, NULL, 0, NULL }
@@ -57,13 +57,13 @@ static PyMethodDef methods[] = {
 // モジュールの定義
 static struct PyModuleDef module = {
     PyModuleDef_HEAD_INIT,
-    "networkc", // module name
+    "networkc_core", // module name
     NULL,
     -1,
     methods
 };
 
-PyMODINIT_FUNC PyInit_networkc(void)
+PyMODINIT_FUNC PyInit_networkc_core(void)
 {
     return PyModule_Create(&module);
 }
