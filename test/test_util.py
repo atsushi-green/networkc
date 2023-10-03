@@ -14,15 +14,9 @@ def generate_big_graph(num_nodes: int = 1000, edge_density: float = 0.5) -> nx.G
     graph.add_nodes_from(range(0, num_nodes))
     for i in range(0, num_nodes):
         for j in range(0, num_nodes):
-            if i == j:
-                # 自分自身への距離は0
-                graph.add_edge(i, j, weight=0)
-            else:
-                # edge_densityの確率で辺を追加する
-                if random.random() <= edge_density:
-                    graph.add_edge(i, j, weight=random.randint(1, 100))
-                else:
-                    graph.add_edge(i, j, weight=float("inf"))
+            # edge_densityの確率で辺を追加する
+            if random.random() <= edge_density and i != j:
+                graph.add_edge(i, j, weight=random.randint(1, 100))
     return graph
 
 
