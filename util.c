@@ -1,4 +1,5 @@
 #include "util.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -8,7 +9,7 @@ double*** malloc_3dim_array(int n1, int n2, int n3)
 {
     int i, j;
     double*** array;
-    array = (int***)malloc(n1 * sizeof(int**));
+    array = (double***)malloc(n1 * sizeof(double**));
     for (i = 0; i < n1; i++) {
         array[i] = (double**)malloc(n2 * sizeof(double*));
         for (j = 0; j < n2; j++)
@@ -53,7 +54,7 @@ void print_2dim_array(double** array, int n1, int n2)
     int i, j;
     for (i = 0; i < n1; i++) {
         for (j = 0; j < n2; j++) {
-            printf("%d ", array[i][j]);
+            printf("%lf ", array[i][j]);
         }
         printf("\n");
     }

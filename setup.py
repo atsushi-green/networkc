@@ -5,6 +5,7 @@ module = Extension(
     sources=[
         "networkc.c",
         "util.c",
+        "heapq.c",
     ],
 )
 
