@@ -47,15 +47,16 @@ def all_pairs_dijkstra_path(G: nx.Graph, weight: str = "weight") -> Dict[Any, Di
     res = nc_core.c_all_pairs_dijkstra_path(weight_matrix.tolist())
 
     # nodeidを元のnode名に変換しつつ、keyの持たせ方を修正する
-    # TODO: ここの変換はできるだけC言語でやる(やれる)
     new_res = {}
     index2node = list(G.nodes)
-    for k, path in res.items():
+    # 一時的内容が重複した辞書を持つとメモリに厳しいので、popitemで回す
+    while res:
+        k, path = res.popitem()
         orig, dest = index2node[k[0]], index2node[k[1]]
         if orig not in new_res:
             new_res[orig] = {}
         new_res[orig][dest] = [index2node[v] for v in path]
-        # del res[k]
+
     return new_res
 
 
