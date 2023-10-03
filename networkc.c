@@ -27,6 +27,7 @@ void c_floyd_warshall(int n, double dist[n][n])
 /*dijkstra*/
 void dijkstra(int n, double** graph, double*** path)
 {
+    // printf("C言語の行列");
     // print_2dim_array(graph, n, n);
     double dist[n], prev[n], visited[n];
     // 初期化
@@ -129,7 +130,7 @@ static PyObject* py_all_pairs_dijkstra_path(PyObject* self, PyObject* args)
             if (PyFloat_AsDouble(pyVal) == -1) {
                 graph[i][j] = INF;
             } else {
-                graph[i][j] = (int)PyFloat_AsDouble(pyVal);
+                graph[i][j] = (double)PyFloat_AsDouble(pyVal);
             }
         }
     }
