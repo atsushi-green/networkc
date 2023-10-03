@@ -4,31 +4,31 @@
 
 /*配列の確保*/
 /* 3次元配列の領域確保 */
-int*** malloc_3dim_array(int n1, int n2, int n3)
+double*** malloc_3dim_array(int n1, int n2, int n3)
 {
     int i, j;
-    int*** array;
+    double*** array;
     array = (int***)malloc(n1 * sizeof(int**));
     for (i = 0; i < n1; i++) {
-        array[i] = (int**)malloc(n2 * sizeof(int*));
+        array[i] = (double**)malloc(n2 * sizeof(double*));
         for (j = 0; j < n2; j++)
-            array[i][j] = (int*)malloc(n3 * sizeof(int));
+            array[i][j] = (double*)malloc(n3 * sizeof(double));
     }
     return array;
 }
 
-int** malloc_2dim_array(int n1, int n2)
+double** malloc_2dim_array(int n1, int n2)
 {
     int i;
-    int** array;
-    array = (int**)malloc(n1 * sizeof(int*));
+    double** array;
+    array = (double**)malloc(n1 * sizeof(double*));
     for (i = 0; i < n1; i++) {
-        array[i] = (int*)malloc(n2 * sizeof(int*));
+        array[i] = (double*)malloc(n2 * sizeof(double*));
     }
     return array;
 }
 
-void free_2dim_array(int** array, int n1)
+void free_2dim_array(double** array, int n1)
 {
     int i;
     for (i = 0; i < n1; i++) {
@@ -37,7 +37,7 @@ void free_2dim_array(int** array, int n1)
     free(array);
 }
 /* 3次元配列の開放 */
-void free_3dim_array(int*** array, int n1, int n2)
+void free_3dim_array(double*** array, int n1, int n2)
 {
     int i, j;
     for (i = 0; i < n1; i++) {
@@ -48,7 +48,7 @@ void free_3dim_array(int*** array, int n1, int n2)
     free(array);
 }
 
-void print_2dim_array(int** array, int n1, int n2)
+void print_2dim_array(double** array, int n1, int n2)
 {
     int i, j;
     for (i = 0; i < n1; i++) {

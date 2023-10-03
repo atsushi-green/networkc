@@ -42,8 +42,6 @@ def all_pairs_dijkstra_path(G: nx.Graph, weight: str = "weight") -> Dict[Any, Di
     weight_matrix = nx.to_numpy_array(G, weight=weight, nonedge=np.inf)
     # infを-1に変換する
     weight_matrix = np.where(weight_matrix == np.inf, -1.0, weight_matrix)
-    # 整数化
-    weight_matrix = np.array(weight_matrix, dtype=int)
     # weight_matrixの対角成分を0にしてList化する
     np.fill_diagonal(weight_matrix, 0)
     res = nc_core.c_all_pairs_dijkstra_path(weight_matrix.tolist())

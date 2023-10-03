@@ -25,10 +25,10 @@ void c_floyd_warshall(int n, double dist[n][n])
 }
 
 /*dijkstra*/
-void dijkstra(int n, int** graph, int*** path)
+void dijkstra(int n, double** graph, double*** path)
 {
-    print_2dim_array(graph, n, n);
-    int dist[n], prev[n], visited[n];
+    // print_2dim_array(graph, n, n);
+    double dist[n], prev[n], visited[n];
     // 初期化
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
@@ -110,15 +110,15 @@ void dijkstra(int n, int** graph, int*** path)
 
 static PyObject* py_all_pairs_dijkstra_path(PyObject* self, PyObject* args)
 {
-    printf("C py_all_pairs_dijkstra_path 実行開始: \n");
     PyListObject* inputList;
     if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &inputList)) {
         return NULL;
     }
     int n = PyList_Size(inputList);
+    // fflush(stdout);
     // mallocで動的に確保する(サイズが大きいと segmentation fault になる)
-    int** graph = malloc_2dim_array(n, n);
-    int*** path = malloc_3dim_array(n, n, n);
+    double** graph = malloc_2dim_array(n, n);
+    double*** path = malloc_3dim_array(n, n, n);
     // graph に隣接重み行列を入れる
     // path には、経路の最初のノード（自分自身のノードiを入れる）
     for (int i = 0; i < n; i++) {
@@ -126,10 +126,10 @@ static PyObject* py_all_pairs_dijkstra_path(PyObject* self, PyObject* args)
             path[i][j][0] = i;
             path[i][j][1] = -1;
             PyObject* pyVal = PyList_GetItem(PyList_GetItem(inputList, i), j);
-            if (PyLong_AsLong(pyVal) == -1) {
+            if (PyFloat_AsDouble(pyVal) == -1) {
                 graph[i][j] = INF;
             } else {
-                graph[i][j] = (int)PyLong_AsLong(pyVal);
+                graph[i][j] = (int)PyFloat_AsDouble(pyVal);
             }
         }
     }
