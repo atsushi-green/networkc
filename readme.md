@@ -1,5 +1,5 @@
 #  NetworkC
-This package is a faster version of NetworkX, a Python package written in C.
+This Python package written in C is a faster version of NetworkX.
 I will implement the ShortestPath algorithm one after the other.
 
 # Install
