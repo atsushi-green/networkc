@@ -27,7 +27,7 @@ void c_floyd_warshall(int n, double dist[n][n])
 }
 
 /*dijkstra*/
-void dijkstra(int n, double** graph, double*** path)
+void dijkstra(int n, double** graph, double*** path, double cutoff)
 {
     double dist[n], prev[n];
     int visited[n];
@@ -66,7 +66,9 @@ void dijkstra(int n, double** graph, double*** path)
 
             // uと隣接するノードの距離を更新する
             for (int v = 0; v < n; v++) {
-                if (!visited[v] && graph[u][v] != INF && dist[u] != INF && dist[u] + graph[u][v] < dist[v]) {
+                if (!visited[v] && graph[u][v] != INF && dist[u] != INF
+                    && dist[u] + graph[u][v] < dist[v]
+                    && dist[u] + graph[u][v] <= cutoff) {
                     dist[v] = dist[u] + graph[u][v];
                     prev[v] = u;
                     push(q, v, dist[v]);
@@ -108,10 +110,16 @@ void dijkstra(int n, double** graph, double*** path)
 static PyObject* py_all_pairs_dijkstra_path(PyObject* self, PyListObject* args)
 {
     PyListObject* inputList;
-    if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &inputList)) {
+    double cutoff;
+
+    if (!PyArg_ParseTuple(args, "O!d", &PyList_Type, &inputList, &cutoff)) {
         return NULL;
     }
     int n = PyList_Size(inputList);
+    if (cutoff == -1) {
+        // cutoffが指定されていない時は、INFにする
+        cutoff = INF;
+    }
     // fflush(stdout);
     // mallocで動的に確保する(サイズが大きいと segmentation fault になる)
     double** graph = malloc_2dim_array(n, n);
@@ -132,7 +140,7 @@ static PyObject* py_all_pairs_dijkstra_path(PyObject* self, PyListObject* args)
     }
 
     // 最短経路を計算
-    dijkstra(n, graph, path);
+    dijkstra(n, graph, path, cutoff);
     PyObject* result = PyDict_New();
     // iからjへの経路をresultに入れる
     for (int i = 0; i < n; i++) {

@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import networkc_core as nc_core
 import networkx as nx
@@ -37,14 +37,18 @@ def single_source_dijkstra_path(G: nx.Graph, source: Any, weight: str = "weight"
     # np.fill_diagonal(weight_matrix, 0)
 
 
-def all_pairs_dijkstra_path(G: nx.Graph, weight: str = "weight") -> Dict[Any, Dict[Any, List[Any]]]:
+def all_pairs_dijkstra_path(
+    G: nx.Graph, cutoff: Optional[int] = None, weight: Optional[str] = "weight"
+) -> Dict[Any, Dict[Any, List[Any]]]:
     # 隣接(重み)行列を作成する
     weight_matrix = nx.to_numpy_array(G, weight=weight, nonedge=np.inf)
     # infを-1に変換する
     weight_matrix = np.where(weight_matrix == np.inf, -1.0, weight_matrix)
     # weight_matrixの対角成分を0にしてList化する
     np.fill_diagonal(weight_matrix, 0)
-    res = nc_core.c_all_pairs_dijkstra_path(weight_matrix.tolist())
+    if cutoff is None:
+        cutoff = -1
+    res = nc_core.c_all_pairs_dijkstra_path(weight_matrix.tolist(), cutoff)
 
     # nodeidを元のnode名に変換しつつ、keyの持たせ方を修正する
     new_res = {}
