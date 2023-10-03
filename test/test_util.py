@@ -16,7 +16,7 @@ def generate_big_graph(num_nodes: int = 1000, edge_density: float = 0.5) -> nx.G
         for j in range(0, num_nodes):
             # edge_densityの確率で辺を追加する
             if random.random() <= edge_density and i != j:
-                graph.add_edge(i, j, weight=random.randint(1, 100))
+                graph.add_edge(i, j, weight=(random.randint(1, 100000) / 100))
     return graph
 
 
