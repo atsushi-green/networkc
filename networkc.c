@@ -8,6 +8,7 @@ pip: $ pip install ./networkc
 #include <stdio.h>
 #include <stdlib.h>
 #define INF INT_MAX
+#include "util.h"
 
 /*floyd_warshall*/
 void c_floyd_warshall(int n, double dist[n][n])
@@ -24,8 +25,9 @@ void c_floyd_warshall(int n, double dist[n][n])
 }
 
 /*dijkstra*/
-void dijkstra(int n, int graph[][n], int path[][n][n])
+void dijkstra(int n, int** graph, int*** path)
 {
+    print_2dim_array(graph, n, n);
     int dist[n], prev[n], visited[n];
     // 初期化
     for (int i = 0; i < n; i++) {
@@ -37,7 +39,7 @@ void dijkstra(int n, int graph[][n], int path[][n][n])
     }
     // 各sourceノードに対して、dijkstraを実行
     for (int source = 0; source < n; source++) {
-        printf("source: %d\n", source);
+        // printf("source: %d\n", source);
         // 初期化
         for (int i = 0; i < n; i++) {
             dist[i] = INF;
@@ -60,8 +62,7 @@ void dijkstra(int n, int graph[][n], int path[][n][n])
             if (u == -1) {
                 continue;
             }
-            // printf("uが決定: %d\n", u);
-            // fflush(stdout);
+
             // ノードuを訪問済みにする
             visited[u] = 1;
 
@@ -70,18 +71,11 @@ void dijkstra(int n, int graph[][n], int path[][n][n])
                 if (!visited[v] && graph[u][v] != INF && dist[u] != INF && dist[u] + graph[u][v] < dist[v]) {
                     dist[v] = dist[u] + graph[u][v];
                     prev[v] = u;
-                    printf("uと隣接するノードの距離を更新: dist[%d] = %d\n", v, dist[v]);
+                    // printf("uと隣接するノードの距離を更新: dist[%d] = %d\n", v, dist[v]);
                 }
             }
         }
-        // for (int i = 0; i < n; i++) {
-        //     printf("%d ", dist[i]);
-        // }
 
-        // for (int i = 0; i < n; i++) {
-        //     printf("%d ", prev[i]);
-        // }
-        // printf("\n");
         // target への最短経路をpathに格納
         for (int target = 0; target < n; target++) {
             if (dist[target] == INF) {
@@ -110,13 +104,6 @@ void dijkstra(int n, int graph[][n], int path[][n][n])
             }
         }
     }
-    // ソース0からターゲット3への最短経路を表示
-    // printf("source: %d, target: %d\n", 0, 3);
-    // printf("aaaaa %d aaaaa\n", path[0][3][0]);
-    // for (int i = 0; i < n; i++) {
-    //     printf("%d \n", path[0][3][i]);
-    // }
-    printf("bbbbbbb");
 
     fflush(stdout);
 }
@@ -128,12 +115,10 @@ static PyObject* py_all_pairs_dijkstra_path(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &inputList)) {
         return NULL;
     }
-    // TODO: mallocで動的に確保する(サイズが大きいと segmentation fault になる)
     int n = PyList_Size(inputList);
-    // int*** path = malloc_3dim_array(n, n, n);
-    // int** graph = malloc_2dim_array(n, n);
-    int graph[n][n];
-    int path[n][n][n];
+    // mallocで動的に確保する(サイズが大きいと segmentation fault になる)
+    int** graph = malloc_2dim_array(n, n);
+    int*** path = malloc_3dim_array(n, n, n);
     // graph に隣接重み行列を入れる
     // path には、経路の最初のノード（自分自身のノードiを入れる）
     for (int i = 0; i < n; i++) {
@@ -148,8 +133,7 @@ static PyObject* py_all_pairs_dijkstra_path(PyObject* self, PyObject* args)
             }
         }
     }
-    printf("C　dijkstra実行開始: \n");
-    fflush(stdout);
+
     // 最短経路を計算
     dijkstra(n, graph, path);
     PyObject* result = PyDict_New();
@@ -164,10 +148,6 @@ static PyObject* py_all_pairs_dijkstra_path(PyObject* self, PyObject* args)
                 continue;
             }
             while (u != j) {
-                // if (u != prev) {
-                //     // 同じノードを連続で辿っているものは飛ばす
-                //     PyList_Append(pathList, PyLong_FromLong(u));
-                // }
                 PyList_Append(pathList, PyLong_FromLong(u));
                 prev = u;
                 u = path[i][j][k++];
@@ -179,8 +159,9 @@ static PyObject* py_all_pairs_dijkstra_path(PyObject* self, PyObject* args)
             Py_DECREF(pathList);
         }
     }
-    // TODO: ここでmallocしたメモリ解放
-    // free_3dim_array(path, n, n, n);
+    // こでmallocしたメモリ解放
+    free_3dim_array(path, n, n);
+    free_2dim_array(graph, n);
     return result;
 }
 

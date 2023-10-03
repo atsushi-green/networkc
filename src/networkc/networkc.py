@@ -6,7 +6,7 @@ import networkx as nx
 import numpy as np
 
 
-def list2defaultdict(list_of_list: List[List[float]], node_names: List[Any]) -> Dict[Any, defaultdict[Any, float]]:
+def list2defaultdict(list_of_list: List[List[float]], node_names: List[Any]) -> Dict[Any, Dict[Any, float]]:
     res = defaultdict(lambda: defaultdict(float))
     for i, node_a in enumerate(node_names):
         for j, node_b in enumerate(node_names):
@@ -14,7 +14,7 @@ def list2defaultdict(list_of_list: List[List[float]], node_names: List[Any]) -> 
     return dict(res)
 
 
-def floyd_warshall(G: nx.Graph, weight: str = "weight") -> dict[Any, defaultdict[Any, float]]:
+def floyd_warshall(G: nx.Graph, weight: str = "weight") -> Dict[Any, Dict[Any, float]]:
     # TODO: 隣接距離行列の定義を揃える（-1がつながっていないことを表すようにする）
     # 隣接(重み)行列を作成する
     weight_matrix = nx.to_numpy_array(G, weight=weight, nonedge=np.inf)
@@ -27,7 +27,7 @@ def floyd_warshall(G: nx.Graph, weight: str = "weight") -> dict[Any, defaultdict
     return res
 
 
-def single_source_dijkstra_path(G: nx.Graph, source: Any, weight: str = "weight") -> dict[Any, List[Any]]:
+def single_source_dijkstra_path(G: nx.Graph, source: Any, weight: str = "weight") -> Dict[Any, List[Any]]:
     pass
     # # 隣接(重み)行列を作成する
     # weight_matrix = nx.to_numpy_array(G, weight=weight, nonedge=np.inf)
@@ -37,12 +37,11 @@ def single_source_dijkstra_path(G: nx.Graph, source: Any, weight: str = "weight"
     # np.fill_diagonal(weight_matrix, 0)
 
 
-def all_pairs_dijkstra_path(G: nx.Graph, weight: str = "weight") -> dict[Any, dict[Any, List[Any]]]:
+def all_pairs_dijkstra_path(G: nx.Graph, weight: str = "weight") -> Dict[Any, Dict[Any, List[Any]]]:
     # 隣接(重み)行列を作成する
     weight_matrix = nx.to_numpy_array(G, weight=weight, nonedge=np.inf)
     # infを-1に変換する
     weight_matrix = np.where(weight_matrix == np.inf, -1.0, weight_matrix)
-    print(weight_matrix)
     # 整数化
     weight_matrix = np.array(weight_matrix, dtype=int)
     # weight_matrixの対角成分を0にしてList化する
