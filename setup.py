@@ -1,6 +1,12 @@
 from setuptools import Extension, find_packages, setup
 
-module = Extension("networkc_core", sources=["networkc.c"])
+module = Extension(
+    "networkc_core",
+    sources=[
+        "networkc.c",
+        "util.c",
+    ],
+)
 
 setup(
     name="networkc",
