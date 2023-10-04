@@ -31,7 +31,7 @@ def calc_func_time(f: callable):
     """実行時間を測定するラッパー関数
 
     Args:
-        f (callable): _description_
+        f (callable): 実行時間を測りたい関数
 
     Returns:
         _type_: _description_
@@ -42,7 +42,7 @@ def calc_func_time(f: callable):
         start = datetime.datetime.now()
         result = f(*args, **kwargs)
         end = datetime.datetime.now()
-        print(f"elapsed time: {f.__name__}: { end - start }")
+        print(f"elapsed time:\t{f.__name__}: { end - start }")
         return result
 
     return wrapper

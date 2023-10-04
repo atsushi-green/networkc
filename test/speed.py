@@ -15,6 +15,9 @@ def main():
 
         networkx_floyd_warshall(graph)
         networkc_floyd_warshall(graph)
+
+        networkx_all_pairs_dijkstra_path(graph)
+        networkc_all_pairs_dijkstra_path(graph)
         print()
         print()
 
@@ -28,6 +31,17 @@ def networkx_floyd_warshall(graph):
 def networkc_floyd_warshall(graph):
     # 隣接(重み)行列を作成する
     return nc.floyd_warshall(graph)
+
+
+@calc_func_time
+def networkx_all_pairs_dijkstra_path(graph):
+    return nx.all_pairs_dijkstra_path(graph, weight="weight")
+
+
+@calc_func_time
+def networkc_all_pairs_dijkstra_path(graph):
+    # 隣接(重み)行列を作成する
+    return nc.all_pairs_dijkstra_path(graph)
 
 
 if __name__ == "__main__":
