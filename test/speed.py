@@ -1,5 +1,8 @@
+# 実行速度を計測するためのスクリプト
+# NUM_NODES_LIST に指定したノード数のグラフを作成し、
+# networkx と networkc の メソッド を実行する
 import networkx as nx
-from test_util import calc_func_time, generate_big_graph
+from util import calc_func_time, make_large_graph
 
 import networkc as nc
 
@@ -11,7 +14,7 @@ EDGE_DENSITY = 0.5
 def main():
     for num_nodes in NUM_NODES_LIST:
         print(f"trial: num_nodes: {num_nodes}, edge_density: {EDGE_DENSITY}")
-        graph = generate_big_graph(num_nodes=num_nodes, edge_density=EDGE_DENSITY)
+        graph = make_large_graph(num_nodes=num_nodes, edge_density=EDGE_DENSITY)
 
         networkx_floyd_warshall(graph)
         networkc_floyd_warshall(graph)

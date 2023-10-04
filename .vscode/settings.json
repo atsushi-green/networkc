@@ -5,6 +5,7 @@
     "files.associations": {
         "stdio.h": "c",
         "limits.h": "c",
-        "heapq.h": "c"
+        "heapq.h": "c",
+        "stdlib.h": "c"
     }
 }
