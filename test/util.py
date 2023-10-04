@@ -9,7 +9,7 @@ import networkc as nc
 random.seed(0)
 
 
-def generate_big_graph(num_nodes: int = 1000, edge_density: float = 0.5) -> nx.Graph:
+def make_large_graph(num_nodes: int = 1000, edge_density: float = 0.5) -> nx.Graph:
     graph = nx.DiGraph()
     graph.add_nodes_from(range(0, num_nodes))
     for i in range(0, num_nodes):
@@ -18,13 +18,6 @@ def generate_big_graph(num_nodes: int = 1000, edge_density: float = 0.5) -> nx.G
             if random.random() <= edge_density and i != j:
                 graph.add_edge(i, j, weight=(random.randint(1, 100000) / 100))
     return graph
-
-
-def networkc_floyd_warshall(graph: nx.DiGraph, weight: str = "weight") -> list[list[float]]:
-    # 隣接(重み)行列を作成する
-    weight_matrix = nx.to_numpy_array(graph, weight=weight).tolist()
-    # print(weight_matrix)
-    return nc.floyd_warshall(weight_matrix)
 
 
 def calc_func_time(f: callable):
