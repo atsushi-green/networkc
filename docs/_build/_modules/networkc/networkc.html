@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>networkc.networkc &mdash; networkc  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            networkc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../networkc.html">networkc package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">networkc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">networkc.networkc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for networkc.networkc</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">networkc_core</span> <span class="k">as</span> <span class="nn">nc_core</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.py_util</span> <span class="kn">import</span> <span class="n">list2defaultdict</span>
+
+
+<div class="viewcode-block" id="floyd_warshall">
+<a class="viewcode-back" href="../../networkc.html#networkc.networkc.floyd_warshall">[docs]</a>
+<span class="k">def</span> <span class="nf">floyd_warshall</span><span class="p">(</span><span class="n">G</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">weight</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;weight&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all-pairs shortest path lengths using Floyd&#39;s algorithm.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        G (nx.Graph): NetworkX graph.</span>
+
+<span class="sd">        weight (str, optional): Edge data key corresponding to the edge weight.</span>
+<span class="sd">        Defaults to &quot;weight&quot;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict[Any, Dict[Any, float]]: A dictionary, keyed by source and target,</span>
+<span class="sd">        of shortest paths distances between nodes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: 隣接距離行列の定義を揃える（-1がつながっていないことを表すようにする）</span>
+    <span class="c1"># 隣接(重み)行列を作成する</span>
+    <span class="n">weight_matrix</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">to_numpy_array</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">,</span> <span class="n">nonedge</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+    <span class="c1"># weight_matrixの対角成分を0にしてList化する</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">weight_matrix</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">nc_core</span><span class="o">.</span><span class="n">c_floyd_warshall</span><span class="p">(</span><span class="n">weight_matrix</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="c1"># TODO: ここの変換はできるだけC言語でやる(やれる)</span>
+    <span class="c1"># defaultdictに変換する</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">list2defaultdict</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="single_source_dijkstra_path">
+<a class="viewcode-back" href="../../networkc.html#networkc.networkc.single_source_dijkstra_path">[docs]</a>
+<span class="k">def</span> <span class="nf">single_source_dijkstra_path</span><span class="p">(</span><span class="n">G</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">weight</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;weight&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;pbd</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        G (nx.Graph): _description_</span>
+<span class="sd">        source (Any): _description_</span>
+<span class="sd">        weight (str, optional): _description_. Defaults to &quot;weight&quot;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict[Any, List[Any]]: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+    <span class="c1"># # 隣接(重み)行列を作成する</span>
+    <span class="c1"># weight_matrix = nx.to_numpy_array(G, weight=weight, nonedge=np.inf)</span>
+    <span class="c1"># # infを-1に変換する</span>
+    <span class="c1"># weight_matrix = np.where(weight_matrix == np.inf, -1.0, weight_matrix)</span>
+    <span class="c1"># # weight_matrixの対角成分を0にしてList化する</span>
+    <span class="c1"># np.fill_diagonal(weight_matrix, 0)</span>
+
+
+<div class="viewcode-block" id="all_pairs_dijkstra_path">
+<a class="viewcode-back" href="../../networkc.html#networkc.networkc.all_pairs_dijkstra_path">[docs]</a>
+<span class="k">def</span> <span class="nf">all_pairs_dijkstra_path</span><span class="p">(</span>
+    <span class="n">G</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;weight&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute shortest paths between all nodes in a weighted graph.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        G (nx.Graph): NetworkX graph</span>
+
+<span class="sd">        cutoff (Optional[int], optional): integer or float, optional</span>
+<span class="sd">        Length (sum of edge weights) at which the search is stopped.</span>
+<span class="sd">        If cutoff is provided, only return paths with summed weight &lt;= cutoff.</span>
+<span class="sd">        Defaults to None.</span>
+
+<span class="sd">        weight (Optional[str], optional): string or function</span>
+<span class="sd">        Edge weights will be accessed via the</span>
+<span class="sd">        edge attribute with this key (that is, the weight of the edge</span>
+<span class="sd">        joining `u` to `v` will be ``G.edges[u, v][weight]``). If no</span>
+<span class="sd">        such edge attribute exists, the weight of the edge is assumed to</span>
+<span class="sd">        be one.</span>
+<span class="sd">        Defaults to &quot;weight&quot;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict[Any, Dict[Any, List[Any]]]: (source, dictionary) Dictionary keyed by target and</span>
+<span class="sd">        shortest path as the key value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 隣接(重み)行列を作成する</span>
+    <span class="n">weight_matrix</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">to_numpy_array</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">,</span> <span class="n">nonedge</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+    <span class="c1"># infを-1に変換する</span>
+    <span class="n">weight_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">weight_matrix</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">weight_matrix</span><span class="p">)</span>
+    <span class="c1"># weight_matrixの対角成分を0にしてList化する</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">weight_matrix</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cutoff</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cutoff</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">nc_core</span><span class="o">.</span><span class="n">c_all_pairs_dijkstra_path</span><span class="p">(</span><span class="n">weight_matrix</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">cutoff</span><span class="p">)</span>
+
+    <span class="c1"># nodeidを元のnode名に変換しつつ、keyの持たせ方を修正する</span>
+    <span class="n">new_res</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">index2node</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+    <span class="c1"># 一時的内容が重複した辞書を持つとメモリに厳しいので、popitemで回す</span>
+    <span class="k">while</span> <span class="n">res</span><span class="p">:</span>
+        <span class="n">k</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">popitem</span><span class="p">()</span>
+        <span class="n">orig</span><span class="p">,</span> <span class="n">dest</span> <span class="o">=</span> <span class="n">index2node</span><span class="p">[</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">index2node</span><span class="p">[</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">orig</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_res</span><span class="p">:</span>
+            <span class="n">new_res</span><span class="p">[</span><span class="n">orig</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">new_res</span><span class="p">[</span><span class="n">orig</span><span class="p">][</span><span class="n">dest</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">index2node</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">path</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">new_res</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Atsushi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

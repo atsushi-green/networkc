@@ -4,8 +4,6 @@ from functools import wraps
 
 import networkx as nx
 
-import networkc as nc
-
 random.seed(0)
 
 
