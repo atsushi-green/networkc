@@ -5,3 +5,5 @@ __pycache__
 networkc.egg-info
 build
 run*
+.coverage
+tmp

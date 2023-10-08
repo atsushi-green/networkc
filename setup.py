@@ -3,9 +3,9 @@ from setuptools import Extension, find_packages, setup
 module = Extension(
     "networkc_core",
     sources=[
-        "networkc.c",
-        "util.c",
-        "heapq.c",
+        "src/c_module/networkc.c",
+        "src/c_module/util.c",
+        "src/c_module/heapq.c",
     ],
 )
 
