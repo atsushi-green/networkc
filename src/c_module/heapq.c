@@ -13,9 +13,12 @@ PriorityQueue* create_queue(int size)
 void push(PriorityQueue* q, int vertex, double dist)
 {
     int i = q->len++;
-    while (i && q->nodes[(i - 1) / 2].dist > dist) {
-        q->nodes[i] = q->nodes[(i - 1) / 2];
-        i = (i - 1) / 2;
+    int parentIndex = (i - 1) / 2;
+
+    while (i && q->nodes[parentIndex].dist > dist) {
+        q->nodes[i] = q->nodes[parentIndex];
+        i = parentIndex;
+        parentIndex = (i - 1) / 2;
     }
     q->nodes[i].dist = dist;
     q->nodes[i].vertex = vertex;
