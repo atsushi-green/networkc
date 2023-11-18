@@ -6,11 +6,51 @@ pip: $ pip install ./networkc
 #include <Python.h>
 #include <float.h>
 #include <limits.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #define INF DBL_MAX
 #include "heapq.h"
 #include "util.h"
+
+void bellmanFord(int n, double** graph, double*** path)
+{
+    double** dist = (double**)malloc(n * sizeof(double*));
+    for (int i = 0; i < n; i++) {
+        dist[i] = (double*)malloc(n * sizeof(double));
+        for (int j = 0; j < n; j++) {
+            dist[i][j] = DBL_MAX; // 最初はすべての距離を無限大に設定
+            (*path)[i][j] = NULL;
+        }
+        dist[i][i] = 0; // 自分自身への距離は0
+    }
+
+    for (int k = 0; k < n - 1; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dist[i][j] > dist[i][k] + graph[k][j] && dist[i][k] != DBL_MAX) {
+                    dist[i][j] = dist[i][k] + graph[k][j];
+                    (*path)[i][j] = &graph[i][k];
+                }
+            }
+        }
+    }
+
+    // 負のサイクルのチェック
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (dist[i][j] > dist[i][n - 1] + graph[n - 1][j] && dist[i][n - 1] != DBL_MAX) {
+                printf("グラフに負のサイクルが存在します。\n");
+                exit(1);
+            }
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        free(dist[i]);
+    }
+    free(dist);
+}
 
 /*floyd_warshall*/
 void c_floyd_warshall(int n, double dist[n][n])
